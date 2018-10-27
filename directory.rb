@@ -3,26 +3,27 @@
 def interactive_menu
   loop do
     print_menu
-    process(STDIN.gets.chomp)
+    main_menu_process(STDIN.gets.chomp)
   end
 end
 
 def print_menu
-  puts "-------------"
+  puts "------ Main Menu -------"
   puts "1. Input the students"
   puts "2. Show the students"
   puts "3. Save the list to students.csv"
   puts "4. Load the list from students.csv"
   puts "9. Exit"
-  puts "-------------"
+  puts "------------------------"
 end
 
-def process(selection)
+def main_menu_process(selection)
   case selection
   when "1"
     input_students
   when "2"
-    show_students
+    print_student_menu
+    student_menu_process(STDIN.gets.chomp)
   when "3"
     save_students
   when "4"
@@ -33,6 +34,35 @@ def process(selection)
     puts "invalid selection, try again"
   end
 end
+
+def print_student_menu
+  puts "----- Student Menu -----"
+  puts "1. Show all students"
+  puts "2. Show students with a custom search filter"
+  puts "------------------------"
+end
+
+def student_menu_process(selection)
+  case selection
+    when "1"
+      show_students
+    when "2"
+      student_search
+  end
+end
+
+
+def student_search
+  puts "What letter would you like to search by?"
+  first_letter = gets.chomp.upcase
+  counter = 0
+  @students.each_with_index do |student, index|
+    if student[:name][0] == first_letter
+      puts "#{counter += 1} #{student[:name]} (#{student[:cohort]} cohort)"
+    end
+  end
+end
+
 
 def input_students
   puts "Please enter the names of the students"
