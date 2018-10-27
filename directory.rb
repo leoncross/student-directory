@@ -8,13 +8,13 @@ def interactive_menu
 end
 
 def print_menu
-  puts "------ Main Menu -------"
-  puts "1. Input the students"
-  puts "2. Show the students"
-  puts "3. Save the list to students.csv"
-  puts "4. Load the list from students.csv"
-  puts "9. Exit"
-  puts "------------------------"
+  puts "------ Main Menu -------".center(70)
+  puts "1. Input the students".center(70)
+  puts "2. Show the students".center(70)
+  puts "3. Save the list to students.csv".center(70)
+  puts "4. Load the list from students.csv".center(70)
+  puts "9. Exit".center(70)
+  puts "------------------------".center(70)
 end
 
 def main_menu_process(selection)
@@ -36,10 +36,12 @@ def main_menu_process(selection)
 end
 
 def print_student_menu
-  puts "----- Student Menu -----"
-  puts "1. Show all students"
-  puts "2. Show students with a custom search filter"
-  puts "------------------------"
+  puts "----- Student Menu -----".center(70)
+  puts "1. Show all students".center(70)
+  puts "2. Search students by first letter".center(70)
+  puts "3. Search students by length of name".center(70)
+  puts "9. Exit to main menu".center(70)
+  puts "------------------------".center(70)
 end
 
 def student_menu_process(selection)
@@ -47,35 +49,46 @@ def student_menu_process(selection)
     when "1"
       show_students
     when "2"
-      student_search
+      student_search_first_letter
+    when "3"
+      student_search_name_length
+    when "9"
+      interactive_menu
   end
 end
 
-
-def student_search
+def student_search_first_letter
   puts "What letter would you like to search by?"
-  first_letter = gets.chomp.upcase
+  first_letter = STDIN.gets.chomp
   counter = 0
-  @students.each_with_index do |student, index|
+  @students.each_with_index do |student|
     if student[:name][0] == first_letter
       puts "#{counter += 1} #{student[:name]} (#{student[:cohort]} cohort)"
     end
   end
+  search_students_again
 end
 
-
-def input_students
-  puts "Please enter the names of the students"
-  puts "To finish, just hit return twice"
-  name = STDIN.gets.chomp
-  while !name.empty? do
-    @students << {name: name, cohort: :november}
-    puts "Now we have #{@students.count} students"
-    name = STDIN.gets.chomp
+def student_search_name_length
+  puts "How many letters would you like to search by?"
+  length = STDIN.gets.chomp.to_i
+  counter = 0
+  @students.each_with_index do |student|
+    if student[:name].length <= length
+      puts "#{counter += 1} #{student[:name]} (#{student[:cohort]} cohort)"
+    end
   end
-  @students
+  search_students_again
 end
 
+def search_students_again
+  puts "Would you like to go back to the student search menu? (Y/N)"
+  answer = STDIN.gets.chomp.upcase
+  if answer == "Y"
+    print_student_menu
+    student_menu_process(STDIN.gets.chomp)
+  end
+end
 
 def show_students
   print_header
@@ -106,6 +119,18 @@ def save_students
     file.puts csv_line
   end
   file.close
+end
+
+def input_students
+  puts "Please enter the names of the students"
+  puts "To finish, just hit return twice"
+  name = STDIN.gets.chomp
+  while !name.empty? do
+    @students << {name: name, cohort: :november}
+    puts "Now we have #{@students.count} students"
+    name = STDIN.gets.chomp
+  end
+  @students
 end
 
 def load_students(filename = "students.csv")
