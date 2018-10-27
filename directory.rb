@@ -103,18 +103,18 @@ end
 
 def print_students_list()
   @students.each_with_index do |student, index|
-    puts "#{index+1} #{student[:name]} (#{student[:cohort]} cohort)"
+    puts "#{index+1} Name: #{student[:name]} from #{student[:country]}, whose favourite activity is #{student[:hobby]} (#{student[:cohort]} cohort)"
   end
 end
 
 def print_footer
-  puts "Overall, we have #{@students.count} great students"
+  putting_student_and_students
 end
 
 def save_students
   file = File.open("students.csv", "w")
   @students.each do |student|
-    student_data = [student[:name], student[:cohort]]
+    student_data = [student[:name], student[:country], student[:hobby], student[:cohort]]
     csv_line = student_data.join(",")
     file.puts csv_line
   end
@@ -122,22 +122,41 @@ def save_students
 end
 
 def input_students
-  puts "Please enter the names of the students"
+  puts "Please enter the names of the students, their country of birth,"
+  puts "favourite hobby, and their cohort if applicable"
   puts "To finish, just hit return twice"
+  puts "-----------"
+  puts "Enter the name of the student:"
   name = STDIN.gets.chomp
+  puts "Enter their country of birth:"
+  country = STDIN.gets.chomp
+  puts "Enter their favourite hobby:"
+  hobby = STDIN.gets.chomp
+  puts "Finally, enter their cohort (No need if November, just press enter):"
+  cohort = STDIN.gets.chomp
+  cohort = "november" if cohort.empty?
   while !name.empty? do
-    @students << {name: name, cohort: :november}
-    puts "Now we have #{@students.count} students"
+    @students << {name: name, country: country, hobby: hobby, cohort: cohort}
+    putting_student_and_students
     name = STDIN.gets.chomp
   end
   @students
 end
 
+def putting_student_and_students
+  if @students.count < 2
+    puts "In total, we have #{@students.count} student"
+  else
+    puts "In total, we have #{@students.count} students"
+  end
+end
+
+
 def load_students(filename = "students.csv")
   file = File.open(filename, "r")
   file.readlines.each do |line|
-    name,cohort = line.chomp.split(",")
-    @students << {name: name, cohort: cohort.to_sym}
+    name,hobby,cohort = line.chomp.split(",")
+    @students << {name: name, hobby: hobby, cohort: cohort.to_sym}
   end
   file.close
 end
