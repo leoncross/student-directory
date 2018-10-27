@@ -122,6 +122,8 @@ def save_students
 end
 
 def input_students
+  counter = 0
+  months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
   puts "Please enter the names of the students, their country of birth,"
   puts "favourite hobby, and their cohort if applicable"
   puts "To finish, just hit return twice"
@@ -132,9 +134,21 @@ def input_students
   country = STDIN.gets.chomp
   puts "Enter their favourite hobby:"
   hobby = STDIN.gets.chomp
-  puts "Finally, enter their cohort (No need if November, just press enter):"
-  cohort = STDIN.gets.chomp
-  cohort = "november" if cohort.empty?
+  until counter == 1
+    puts "Please enter a valid cohort (month - i.e., january, february etc.)"
+    cohort = STDIN.gets.chomp
+      months.each do |month|
+        if cohort.empty?
+          cohort = "november"
+          counter =+ 1
+          break
+        elsif cohort == month
+          puts "Great - thank you"
+          counter =+ 1
+          break
+        end
+      end
+    end
   while !name.empty? do
     @students << {name: name, country: country, hobby: hobby, cohort: cohort}
     putting_student_and_students
