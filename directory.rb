@@ -1,4 +1,5 @@
 @students = []
+@months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 
 def interactive_menu
   loop do
@@ -38,8 +39,9 @@ end
 def print_student_menu
   puts "----- Student Menu -----".center(70)
   puts "1. Show all students".center(70)
-  puts "2. Search students by first letter".center(70)
-  puts "3. Search students by length of name".center(70)
+  puts "2. Show all students by cohort".center(70)
+  puts "3. Search students by first letter".center(70)
+  puts "4. Search students by length of name".center(70)
   puts "9. Exit to main menu".center(70)
   puts "------------------------".center(70)
 end
@@ -49,20 +51,36 @@ def student_menu_process(selection)
     when "1"
       show_students
     when "2"
-      student_search_first_letter
+      show_students_by_cohort
     when "3"
+      student_search_first_letter
+    when "4"
       student_search_name_length
     when "9"
       interactive_menu
   end
 end
 
+
+def show_students_by_cohort # for some reason not listing old students - just new
+  print_header
+  @students.each_with_index do |student, index|
+    @months.each do |month|
+      if student[:cohort][month.to_s]
+        puts "Cohort: #{month.capitalize}, Student: #{student[:name]}"
+      end
+    end
+  end
+  print_footer
+end
+
+
 def student_search_first_letter
   puts "What letter would you like to search by?"
-  first_letter = STDIN.gets.chomp
+  first_letter = STDIN.gets.chomp.downcase
   counter = 0
   @students.each_with_index do |student|
-    if student[:name][0] == first_letter
+    if student[:name][0].downcase == first_letter
       puts "#{counter += 1} #{student[:name]} (#{student[:cohort]} cohort)"
     end
   end
@@ -97,11 +115,11 @@ def show_students
 end
 
 def print_header
-  puts "The students of Villains Academy"
+  puts "The students of Villains Academy:"
   puts "--------------"
 end
 
-def print_students_list()
+def print_students_list
   @students.each_with_index do |student, index|
     puts "#{index+1} Name: #{student[:name]} from #{student[:country]}, whose favourite activity is #{student[:hobby]} (#{student[:cohort]} cohort)"
   end
@@ -123,7 +141,6 @@ end
 
 def input_students
   counter = 0
-  months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
   puts "Please enter the names of the students, their country of birth,"
   puts "favourite hobby, and their cohort if applicable"
   puts "To finish, just hit return twice"
@@ -136,8 +153,8 @@ def input_students
   hobby = STDIN.gets.chomp
   until counter == 1
     puts "Please enter a valid cohort (month - i.e., january, february etc.)"
-    cohort = STDIN.gets.chomp
-      months.each do |month|
+    cohort = STDIN.gets.chomp.downcase
+      @months.each do |month|
         if cohort.empty?
           cohort = "november"
           counter =+ 1
@@ -169,8 +186,8 @@ end
 def load_students(filename = "students.csv")
   file = File.open(filename, "r")
   file.readlines.each do |line|
-    name,hobby,cohort = line.chomp.split(",")
-    @students << {name: name, hobby: hobby, cohort: cohort.to_sym}
+    name,country,hobby,cohort = line.chomp.split(",")
+    @students << {name: name, country: country, hobby: hobby, cohort: cohort.to_sym}
   end
   file.close
 end
